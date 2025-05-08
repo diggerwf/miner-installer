@@ -68,7 +68,7 @@ while true; do
                 chmod +x "update.sh"
                 ./"update.sh"
             else
-                echo "Datei '$datei2' wurde nicht gefunden."
+                echo "Datei 'update.sh' wurde nicht gefunden."
             fi
             ;;
         3)
