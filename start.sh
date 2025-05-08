@@ -59,9 +59,9 @@ while true; do
             exit 0
             ;;
         2)
-            if [ -f "$datei2" ]; then
-                chmod +x "$datei2"
-                ./"$datei2"
+            if [ -f "update.sh" ]; then
+                chmod +x "update.sh"
+                ./"update.sh"
             else
                 echo "Datei '$datei2' wurde nicht gefunden."
             fi
