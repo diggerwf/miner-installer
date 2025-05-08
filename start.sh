@@ -35,7 +35,7 @@ bitcoin_miner_auswahl() {
             2)
                 # Stelle sicher, dass btc-cpu-miner.sh ausführbar ist, bevor es gestartet wird
                 chmod +x start.sh
-                run_btc_cpu_miner
+                read -p "Drücke Enter, um fortzufahren..."
                 ;;
             *)
                 echo "Ungültige Auswahl. Zurück zum Hauptmenü."
