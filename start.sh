@@ -25,7 +25,7 @@ bitcoin_miner_auswahl() {
         echo "Der Ordner 'cpuminer-multi' wurde nicht gefunden."
         echo "Bitte wählen Sie eine Option:"
         echo "1) Bitcoin CPU Miner installieren"
-        echo "2) Bitcoin CPU Miner starten"
+        echo "2) Zurück"
         read -p "Ihre Wahl (1/2): " miner_auswahl
 
         case "$miner_auswahl" in
@@ -34,7 +34,7 @@ bitcoin_miner_auswahl() {
                 ;;
             2)
                 # Stelle sicher, dass btc-cpu-miner.sh ausführbar ist, bevor es gestartet wird
-                chmod +x btc-cpu-miner.sh
+                chmod +x start.sh
                 run_btc_cpu_miner
                 ;;
             *)
