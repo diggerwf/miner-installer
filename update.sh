@@ -4,7 +4,7 @@
 ENDSTART="start.sh"  # Hier kannst du den Dateinamen anpassen
 
 # GitHub-Repository-URL und Branch definieren
-REPO_URL="https://github.com/diggerwf/update-mit-Start-von-anderen-Skripten.git"
+REPO_URL="https://github.com/diggerwf/miner-installer.git"
 BRANCH="main"
 
 # Pfad zum Repository (aktueller Ordner)
