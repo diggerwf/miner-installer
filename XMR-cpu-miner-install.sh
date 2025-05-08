@@ -20,11 +20,12 @@ fi
 # Funktion zum Starten des Miners
 start_miner() {
     echo "Stelle sicher, dass start.sh ausführbar ist..."
-    chmod +x start.sh || { echo "Fehler beim Setzen der Ausführungsrechte für start.sh"; exit 1; }
-    echo "Miner wird jetzt in der Screen-Session 'xmr' gestartet..."
-    ./start.sh || { echo "Fehler beim Starten des Miners"; exit 1; }
+    chmod +x start.sh
+    echo "Miner wird jetzt in der Screen-Session 'btc-miner' gestartet..."
+    ./start.sh
     echo "Fertig! Der Miner läuft jetzt."
 }
+
 
 # Überprüfen, ob der Ordner 'xmrig' bereits existiert
 if [ -d "xmrig" ]; then
