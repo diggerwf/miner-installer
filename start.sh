@@ -26,6 +26,7 @@ bitcoin_miner_auswahl() {
         echo "Bitte wählen Sie eine Option:"
         echo "1) Bitcoin CPU Miner installieren"
         echo "2) Zurück"
+        echo "3) Beenden"
         read -p "Ihre Wahl (1/2): " miner_auswahl
 
         case "$miner_auswahl" in
@@ -36,6 +37,10 @@ bitcoin_miner_auswahl() {
                 # Stelle sicher, dass btc-cpu-miner.sh ausführbar ist, bevor es gestartet wird
                 chmod +x start.sh
                 echo "gehe zurück"
+                ;;
+            3)
+                echo "Beenden..."
+                exit 0
                 ;;
             *)
                 echo "Ungültige Auswahl. Zurück zum Hauptmenü."
