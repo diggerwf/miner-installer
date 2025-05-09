@@ -12,6 +12,18 @@ if [ "$1" == "-u" ]; then
     exit 0
 fi
 
+# Parameterverarbeitung für -stop
+if [ "$1" == "-stop" ]; then
+    if screen -list | grep -q "$SESSION_NAME"; then
+        echo "Beende die Screen-Session '$SESSION_NAME'..."
+        screen -S "$SESSION_NAME" -X quit
+        echo "Miner wurde gestoppt."
+    else
+        echo "Keine laufende Screen-Session '$SESSION_NAME' gefunden."
+    fi
+    exit 0
+    
+fi
 # Funktion zum Abfragen der Wallet- und Pool-Adresse
 frage_daten() {
     echo "Bitte Wallet-Adresse eingeben:"
