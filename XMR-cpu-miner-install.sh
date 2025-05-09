@@ -19,7 +19,7 @@ echo "System aktualisieren..."
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y git build-essential cmake libuv1-dev libssl-dev libhwloc-dev
 
-# Schritt 3: Miner klonen
+# Schritt 3: Miner klonen (im aktuellen Verzeichnis)
 cd ..
 echo "Klonen des Miners..."
 git clone "$REPO_URL" "$MINER_DIR"
@@ -32,7 +32,7 @@ sudo cmake ..
 echo "Bauen..."
 sudo make -j$(nproc)
 
-# Schritt 5: Zurück ins Verzeichnis miner-installer und starten
+# Schritt 5: Zurück ins Verzeichnis `miner-installer`
 cd ../../"$INSTALLER_DIR"
 
 # Schritt 6: start.sh setzen, chmod +x und ausführen
