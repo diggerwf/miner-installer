@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Speichere den ursprünglichen Arbeitsordner
+ORIGINAL_DIR=$(pwd)
+
 # Funktion zum Ausführen von Befehlen mit Root-Rechten
 run_as_root() {
     if [ "$EUID" -ne 0 ]; then
@@ -21,16 +24,26 @@ fi
 start_miner() {
     echo "Stelle sicher, dass start.sh ausführbar ist..."
     chmod +x start.sh
+
+    # Wenn start.sh im aktuellen Verzeichnis liegt, dann:
     echo "Miner wird jetzt in der Screen-Session 'btc-miner' gestartet..."
     ./start.sh
+
     echo "Fertig! Der Miner läuft jetzt."
 }
-
 
 # Überprüfen, ob der Ordner 'xmrig' bereits existiert
 if [ -d "xmrig" ]; then
     echo "Der Ordner 'xmrig' wurde gefunden. Es scheint, dass der Miner bereits installiert ist."
+
+    # In den xmrig-Ordner wechseln, um start.sh auszuführen (falls notwendig)
+    cd xmrig || { echo "Fehler beim Wechsel in den xmrig-Ordner"; exit 1; }
+
     start_miner
+
+    # Nach dem Starten wieder in den ursprünglichen Ordner zurückkehren
+    cd "$ORIGINAL_DIR"
+
     exit 0
 fi
 
@@ -54,6 +67,7 @@ cd .. || { echo "Fehler beim Wechsel in den Parent-Ordner"; exit 1; }
 echo "Klonen des Miners-Repositories..."
 run_as_root git clone https://github.com/xmrig/xmrig.git || { echo "Fehler beim Klonen des Repositories"; exit 1; }
 
+# In den geklonten xmrig-Ordner wechseln
 cd xmrig || { echo "Fehler beim Wechsel in den xmrig-Ordner"; exit 1; }
 
 # Erstellen des Builds
@@ -68,5 +82,8 @@ cmake .. || { echo "Fehler bei cmake"; exit 1; }
 echo "Bauen..."
 make || { echo "Fehler beim Kompilieren"; exit 1; }
 
-# Miner starten
+# Miner starten (im xmrig/build-Verzeichnis)
 start_miner
+
+# Nach Abschluss wieder in den ursprünglichen Ordner zurückkehren
+cd "$ORIGINAL_DIR"
