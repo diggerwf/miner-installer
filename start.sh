@@ -4,14 +4,14 @@
 install_bitcoin_cpu_miner() {
     echo "Bitcoin CPU Miner wird installiert..."
     chmod +x $HOME/miner-installer/bitcoin-cpu-miner-install.sh
-    ./$HOME/miner-installer/bitcoin-cpu-miner-install.sh
+    .$HOME/miner-installer/bitcoin-cpu-miner-install.sh
 }
 
 # Funktion zum Installieren des xmr CPU Miners
 install_xmr_cpu_miner() {
     echo "XMR CPU Miner wird installiert..."
     chmod +x $HOME/miner-installer/XMR-cpu-miner-install.sh
-    ./$HOME/miner-installer/XMR-cpu-miner-install.sh
+    .$HOME/miner-installer/XMR-cpu-miner-install.sh
 }
 
 # Funktion zum Ausführen des btc-cpu-miner.sh Skripts
