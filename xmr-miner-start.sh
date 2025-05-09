@@ -3,12 +3,12 @@
 # Überprüfen, ob der Parameter -u übergeben wurde
 if [ "$1" == "-u" ]; then
     # Prüfen, ob update.sh ausführbar ist
-    if [ ! -x "./$HOME/miner-installer/update.sh" ]; then
-        echo "update_miner.sh ist nicht ausführbar. Setze Berechtigungen..."
-        chmod +x ./$HOME/miner-installer/update.sh
+    if [ ! -x "$HOME/miner-installer/update.sh" ]; then
+        echo "update.sh ist nicht ausführbar. Setze Berechtigungen..."
+        chmod +x "$HOME/miner-installer/update.sh"
     fi
     # Update-Skript ausführen
-    ./$HOME/miner-installer/update.sh
+    "$HOME/miner-installer/update.sh"
     exit 0
 fi
 
@@ -18,9 +18,9 @@ frage_daten() {
     read -r WALLET_ADDRESS
     echo "Bitte Pool-URL eingeben (z.B. eu1.solopool.org:8010):"
     echo "Xmr Solo Pool https://xmr.solopool.org/"
-    echo "240K	eu1.solopool.org	8010	Low-End Hardware"
-    echo "480K	eu1.solopool.org	7010	Mid-Range Hardware"
-    echo "960K	eu1.solopool.org	9010	High-End Hardware"
+    echo "240K eu1.solopool.org 8010 Low-End Hardware"
+    echo "480K eu1.solopool.org 7010 Mid-Range Hardware"
+    echo "960K eu1.solopool.org 9010 High-End Hardware"
     read -r POOL_URL
 
     # Speichern der Daten in der Datei
@@ -33,7 +33,20 @@ SESSION_NAME="xmrig-miner"
 MINER_VERZEICHN="$HOME/xmrig/build"
 DATA_FILE="xmrig-cpu.userdata"
 
-# Parameterverarbeitung (bestehender Code)
+# Parameterverarbeitung für Start/Stop
+if [ "$1" == "-stop" ]; then
+    # Screen-Session beenden, falls vorhanden
+    if screen -list | grep -q "$SESSION_NAME"; then
+        echo "Beende die Screen-Session '$SESSION_NAME'..."
+        screen -S "$SESSION_NAME" -X quit
+        echo "Miner gestoppt."
+    else
+        echo "Keine laufende Screen-Session '$SESSION_NAME' gefunden."
+    fi
+    exit 0
+fi
+
+# Weitere Parameterverarbeitung (Löschen, Initialisieren)
 if [[ "$1" == "-w" ]]; then
     echo "Lösche gespeicherte Daten..."
     rm -f "$DATA_FILE"
@@ -69,20 +82,22 @@ if [ ! -d "$MINER_VERZEICHN" ]; then
     exit 1
 fi
 
-# Überprüfen, ob die Screen-Session bereits läuft
+# Überprüfen, ob die Screen-Session bereits läuft (nur starten, wenn nicht)
 if screen -list | grep -q "$SESSION_NAME"; then
     echo "Die Screen-Session '$SESSION_NAME' läuft bereits."
 else
     echo "Starte den Miner in einer neuen Screen-Session..."
 
     # In das Verzeichnis wechseln und Miner starten in einer Screen-Session
-    cd "$MINER_VERZEICHN" && \
+    (
+        cd "$MINER_VERZEICHN" && \
         screen -dmS "$SESSION_NAME" ./xmrig -a rx/0 -o "$POOL_URL" -u "$WALLET_ADDRESS" -p x
 
-    if [ $? -eq 0 ]; then
-        echo "Miner wurde erfolgreich gestartet."
-    else
-        echo "Fehler beim Starten des Miners."
-        exit 1
-    fi
+        if [ $? -eq 0 ]; then
+            echo "Miner wurde erfolgreich gestartet."
+        else 
+            echo "Fehler beim Starten des Miners."
+            exit 1
+        fi
+    )
 fi
