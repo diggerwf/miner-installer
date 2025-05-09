@@ -1,62 +1,38 @@
 #!/bin/bash
 
-# Überprüfen, ob der Parameter -u übergeben wurde
-if [ "$1" == "-u" ]; then
-    # Prüfen, ob update.sh ausführbar ist
-    if [ ! -x "./update.sh" ]; then
-        echo "update_miner.sh ist nicht ausführbar. Setze Berechtigungen..."
-        chmod +x ./update.sh
+# Variablen
+SESSION_NAME="btc-miner"
+MINER_VERZEICHN="$HOME/btc-miner/build"
+DATA_FILE="btc-cpu-userdata"
+
+# Parameterverarbeitung für Stop
+if [ "$1" == "-stop" ]; then
+    if screen -list | grep -q "$SESSION_NAME"; then
+        echo "Beende die Screen-Session '$SESSION_NAME'..."
+        screen -S "$SESSION_NAME" -X quit
+        echo "Miner gestoppt."
+    else
+        echo "Keine laufende Screen-Session '$SESSION_NAME' gefunden."
     fi
-    # Update-Skript ausführen
-    ./update.sh
     exit 0
 fi
 
-# Funktion zum Abfragen der Wallet- und Pool-Adresse
-frage_daten() {
-    echo "Bitte Wallet-Adresse eingeben:"
-    read -r WALLET_ADDRESS
-    echo "Bitte Pool-URL eingeben (z.B. stratum+tcp://public-pool.io:21496):"
-    read -r POOL_URL
+# Hier kannst du weitere Parameterverarbeitungen hinzufügen, z.B. für Start, Daten löschen etc.
+# Beispiel: Daten löschen (-w), Daten eingeben (-i), etc.
 
-    # Speichern der Daten in der Datei
-    echo "WALLET_ADDRESS=\"$WALLET_ADDRESS\"" > "$DATA_FILE"
-    echo "POOL_URL=\"$POOL_URL\"" >> "$DATA_FILE"
-}
-
-# Variablen
-SESSION_NAME="btc-miner"
-MINER_VERZEICHN="$HOME/cpuminer-multi"
-DATA_FILE="btc-cpu.userdata"
-
-# Parameterverarbeitung (bestehender Code)
+# Beispiel: Daten löschen
 if [[ "$1" == "-w" ]]; then
     echo "Lösche gespeicherte Daten..."
     rm -f "$DATA_FILE"
     echo "Daten gelöscht. Das Skript wird beendet."
     exit 0
-elif [[ "$1" == "-i" ]]; then
-    if [ -f "$DATA_FILE" ]; then
-        source "$DATA_FILE"
-        echo "Geladene Daten:"
-        echo "Wallet: $WALLET_ADDRESS"
-        echo "Pool: $POOL_URL"
-    else
-        frage_daten
-        source "$DATA_FILE"
-    fi
-elif [[ "$1" == "-wi" ]]; then
-    echo "Lösche gespeicherte Daten..."
-    rm -f "$DATA_FILE"
-    frage_daten
-    source "$DATA_FILE"
 fi
 
-# Falls keine Daten vorhanden, abfragen
+# Falls keine Daten vorhanden, abfragen (falls notwendig)
 if [ ! -f "$DATA_FILE" ]; then
-    frage_daten
-else
-    source "$DATA_FILE"
+    # Funktion zum Abfragen der Wallet- und Pool-Adresse kannst du hier einfügen
+    # oder andere Initialisierungen vornehmen.
+    echo "Hier kannst du deine Eingaben machen oder das Skript anpassen."
 fi
 
 # Überprüfen, ob das Verzeichnis existiert
@@ -65,20 +41,22 @@ if [ ! -d "$MINER_VERZEICHN" ]; then
     exit 1
 fi
 
-# Überprüfen, ob die Screen-Session bereits läuft
+# Überprüfen, ob die Screen-Session bereits läuft (nur starten, wenn nicht)
 if screen -list | grep -q "$SESSION_NAME"; then
     echo "Die Screen-Session '$SESSION_NAME' läuft bereits."
 else
     echo "Starte den Miner in einer neuen Screen-Session..."
 
     # In das Verzeichnis wechseln und Miner starten in einer Screen-Session
-    cd "$MINER_VERZEICHN" && \
-        screen -dmS "$SESSION_NAME" ./cpuminer -a sha256d -o "$POOL_URL" -u "$WALLET_ADDRESS" -p x
+    (
+        cd "$MINER_VERZEICHN" && \
+        screen -dmS "$SESSION_NAME" ./miner-binary --optionen
 
-    if [ $? -eq 0 ]; then
-        echo "Miner wurde erfolgreich gestartet."
-    else
-        echo "Fehler beim Starten des Miners."
-        exit 1
-    fi
+        if [ $? -eq 0 ]; then
+            echo "Miner wurde erfolgreich gestartet."
+        else 
+            echo "Fehler beim Starten des Miners."
+            exit 1
+        fi
+    )
 fi
