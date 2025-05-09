@@ -34,7 +34,7 @@ echo "Bauen..."
 sudo make -j$(nproc)
 
 # Schritt 5: Zurück ins Verzeichnis `miner-installer`
-cd ../../"$INSTALLER_DIR"
+cd "$INSTALLER_DIR"
 
 # Schritt 6: start.sh setzen, chmod +x und ausführen
 if [ ! -f "$START_SCRIPT" ]; then
