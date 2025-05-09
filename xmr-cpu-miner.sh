@@ -13,22 +13,22 @@ while true; do
 
     case "$auswahl" in
         1)
-            chmod +x btc-cpu-miner-start.sh
+            chmod +x xmr-miner-start.sh
             ./xmr-miner-start.sh
             read -p "Drücke Enter, um fortzufahren..."
             ;;
         2)
-            chmod +x btc-cpu-miner-start.sh
+            chmod +x xmr-miner-start.sh
             ./xmr-miner-start.sh -stop
             read -p "Drücke Enter, um fortzufahren..."
             ;;
         3)
-            chmod +x btc-cpu-miner-start.sh
+            chmod +x xmr-miner-start.sh
             ./xmr-miner-start.sh -wi
             read -p "Drücke Enter, um fortzufahren..."
             ;;
         4)
-            chmod +x btc-cpu-miner-start.sh
+            chmod +x xmr-miner-start.sh
             ./xmr-miner-start.sh -w
             read -p "Drücke Enter, um fortzufahren..."
             ;;
