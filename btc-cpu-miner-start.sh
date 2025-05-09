@@ -5,22 +5,19 @@ SESSION_NAME="btc-miner"
 MINER_VERZEICHN="$HOME/btc-miner/build"
 DATA_FILE="btc-cpu-userdata"
 
-# Parameterverarbeitung für Stop
+# Parameterverarbeitung für -stop
 if [ "$1" == "-stop" ]; then
     if screen -list | grep -q "$SESSION_NAME"; then
         echo "Beende die Screen-Session '$SESSION_NAME'..."
         screen -S "$SESSION_NAME" -X quit
-        echo "Miner gestoppt."
+        echo "Miner wurde gestoppt."
     else
         echo "Keine laufende Screen-Session '$SESSION_NAME' gefunden."
     fi
     exit 0
 fi
 
-# Hier kannst du weitere Parameterverarbeitungen hinzufügen, z.B. für Start, Daten löschen etc.
-# Beispiel: Daten löschen (-w), Daten eingeben (-i), etc.
-
-# Beispiel: Daten löschen
+# Beispiel: Daten löschen (-w)
 if [[ "$1" == "-w" ]]; then
     echo "Lösche gespeicherte Daten..."
     rm -f "$DATA_FILE"
@@ -28,11 +25,19 @@ if [[ "$1" == "-w" ]]; then
     exit 0
 fi
 
-# Falls keine Daten vorhanden, abfragen (falls notwendig)
+# Falls keine Daten vorhanden, abfragen (hier kannst du deine Funktion einfügen)
 if [ ! -f "$DATA_FILE" ]; then
-    # Funktion zum Abfragen der Wallet- und Pool-Adresse kannst du hier einfügen
-    # oder andere Initialisierungen vornehmen.
-    echo "Hier kannst du deine Eingaben machen oder das Skript anpassen."
+    # Beispiel: Daten eingeben oder laden
+    echo "Bitte gib deine Wallet-Adresse ein:"
+    read WALLET_ADDRESS
+    echo "Bitte gib den Pool-URL ein:"
+    read POOL_URL
+
+    # Daten speichern
+    echo "WALLET_ADDRESS='$WALLET_ADDRESS'" > "$DATA_FILE"
+    echo "POOL_URL='$POOL_URL'" >> "$DATA_FILE"
+else
+    source "$DATA_FILE"
 fi
 
 # Überprüfen, ob das Verzeichnis existiert
@@ -47,10 +52,9 @@ if screen -list | grep -q "$SESSION_NAME"; then
 else
     echo "Starte den Miner in einer neuen Screen-Session..."
 
-    # In das Verzeichnis wechseln und Miner starten in einer Screen-Session
     (
         cd "$MINER_VERZEICHN" && \
-        screen -dmS "$SESSION_NAME" ./miner-binary --optionen
+        screen -dmS "$SESSION_NAME" ./xmrig --donate-level=1 -o "$POOL_URL" -u "$WALLET_ADDRESS" -p x
 
         if [ $? -eq 0 ]; then
             echo "Miner wurde erfolgreich gestartet."
