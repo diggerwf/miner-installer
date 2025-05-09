@@ -8,7 +8,7 @@ INSTALLER_DIR="$HOME/miner-installer"
 START_SCRIPT="$INSTALLER_DIR/start.sh"
 
 # Schritt 1: Überprüfen, ob der Miner bereits vorhanden ist
-if [ -d "$MINER_DIR" ]; then
+if [ -d "../$MINER_DIR" ]; then
     echo "Miner-Verzeichnis gefunden. Gehe wieder zurück in start.sh"
     chmod +x "$START_SCRIPT"
     "$START_SCRIPT"
@@ -21,7 +21,7 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y git build-essential cmake libuv1-dev libssl-dev libhwloc-dev
 
 # Schritt 3: Miner klonen (im aktuellen Verzeichnis)
-cd "$HOME_DI"
+cd "$HOME_DIR"
 echo "Klonen des xmrig Miners..."
 git clone "$REPO_URL" "$MINER_DIR"
 
