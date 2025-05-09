@@ -1,84 +1,50 @@
 #!/bin/bash
 
-# Speichere den ursprünglichen Ordner (wo das Skript liegt)
+# Speichere den ursprünglichen Ordner
 ORIGINAL_DIR=$(pwd)
 
-# Funktion zum Ausführen von Befehlen mit Root-Rechten
-run_as_root() {
-    if [ "$EUID" -ne 0 ]; then
-        sudo "$@"
-    else
-        "$@"
-    fi
-}
-
-# Falls nicht als root, neu starten mit sudo
-if [ "$EUID" -ne 0 ]; then
-    echo "Dieses Skript wird jetzt mit root-Rechten neu gestartet..."
-    exec sudo "$0" "$@"
-fi
-
-# Funktion zum Starten des Miners im xmrig-Verzeichnis
+# Funktion zum Starten des Miners
 start_miner() {
+    echo "Wechsel in den miner-installer-Ordner..."
+    cd miner-installer || { echo "Fehler beim Wechsel in den miner-installer-Ordner"; exit 1; }
     echo "Stelle sicher, dass start.sh ausführbar ist..."
     chmod +x start.sh
-
-    # Miner starten (z.B. in Screen oder direkt)
     ./start.sh
-
-    echo "Miner wurde gestartet."
+    # Nach dem Start wieder in den ursprünglichen Ordner zurückkehren (optional)
+    cd "$ORIGINAL_DIR"
 }
 
-# Prüfen, ob xmrig bereits installiert ist
-if [ -d "xmrig" ]; then
-    echo "Der Ordner 'xmrig' wurde gefunden. Es scheint, dass der Miner bereits installiert ist."
-
-    # In den xmrig-Ordner wechseln
-    cd xmrig || { echo "Fehler beim Wechsel in den xmrig-Ordner"; exit 1; }
-
-    # Miner starten
+# Prüfen, ob die start.sh bereits vorhanden ist (im aktuellen Verzeichnis)
+if [ -f "miner-installer/start.sh" ]; then
+    echo "start.sh im miner-installer gefunden. Miner wird gestartet..."
     start_miner
-
-    # Zurück in den ursprünglichen Ordner (miner-installer)
-    cd "$ORIGINAL_DIR"
-
     exit 0
 fi
 
-# Wenn nicht vorhanden: in den Parent-Ordner wechseln (weil das Skript im miner-installer liegt)
-echo "xmrig nicht gefunden. Installation wird gestartet..."
+# Wenn nicht vorhanden: in den Parent-Ordner wechseln (falls notwendig)
+echo "start.sh nicht gefunden. Installation wird gestartet..."
 cd .. || { echo "Fehler beim Wechsel in den Parent-Ordner"; exit 1; }
 
-# System aktualisieren und upgraden
-echo "System-Update und Upgrade..."
-run_as_root apt update || { echo "Fehler bei apt update"; exit 1; }
-run_as_root apt full-upgrade -y || { echo "Fehler bei apt full-upgrade"; exit 1; }
-
-# Nicht mehr benötigte Pakete entfernen
-echo "Nicht mehr benötigte Pakete entfernen..."
-run_as_root apt autoremove -y || { echo "Fehler bei autoremove"; exit 1; }
-
-# Benötigte Pakete installieren
-echo "Benötigte Pakete installieren..."
-run_as_root apt install git screen build-essential cmake libuv1-dev libssl-dev libhwloc-dev -y || { echo "Fehler bei Paketinstallation"; exit 1; }
+# System aktualisieren und bauen (wie vorher)
+apt update && apt full-upgrade -y
+apt autoremove -y
+apt install git screen build-essential cmake libuv1-dev libssl-dev libhwloc-dev -y
 
 # Klonen des Miners-Repositories
-echo "Klonen des Miners-Repositories..."
-run_as_root git clone https://github.com/xmrig/xmrig.git || { echo "Fehler beim Klonen des Repositories"; exit 1; }
+git clone https://github.com/xmrig/xmrig.git
 
-# Zurück in den ursprünglichen Ordner (miner-installer)
-cd "$ORIGINAL_DIR" || { echo "Fehler beim Zurückkehren zum Originalordner"; exit 1; }
+# Zurück im ursprünglichen Ordner
+cd "$ORIGINAL_DIR"
 
 # In den xmrig-Ordner wechseln und bauen
 cd xmrig || { echo "Fehler beim Wechsel in den xmrig-Ordner"; exit 1; }
-echo "Erstelle build..."
-mkdir build && cd build || { echo "Fehler beim Erstellen des Build-Ordners"; exit 1; }
-echo "Konfigurieren..."
-cmake .. || { echo "Fehler bei cmake"; exit 1; }
-echo "Bauen..."
-make || { echo "Fehler beim Kompilieren"; exit 1; }
+mkdir build && cd build
+cmake .. || { echo "cmake Fehler"; exit 1; }
+make || { echo "Make Fehler"; exit 1; }
 
-# Nach Abschluss: wieder in den ursprünglichen Ordner zurückkehren (falls gewünscht)
+# Nach dem Build: wieder in den ursprünglichen Ordner zurückkehren
 cd "$ORIGINAL_DIR"
 
-# Optional: hier kannst du noch automatisch start.sh ausführen, falls vorhanden.
+# Optional: Miner automatisch starten nach der Installation
+echo "Starte Miner..."
+start_miner
