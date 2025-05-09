@@ -31,9 +31,9 @@ git clone "$REPO_URL" "$MINER_DIR"
 cd "$MINER_DIR"
 mkdir -p build && cd build
 echo "Konfigurieren..."
-sudo cmake ..
+sudo ./cmake ..
 echo "Bauen..."
-sudo make -j$(nproc)
+sudo ./make -j$(nproc)
 
 # Schritt 5: Zurück ins Verzeichnis `miner-installer`
 cd "$INSTALLER_DIR"
