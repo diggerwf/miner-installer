@@ -3,7 +3,7 @@
 # Variablen
 MINER_DIR="../xmrig"
 REPO_URL="https://github.com/xmrig/xmrig.git"
-INSTALLER_DIR="./miner-installer"
+INSTALLER_DIR="$HOME/miner-installer"
 START_SCRIPT="$INSTALLER_DIR/start.sh"
 
 # Schritt 1: Überprüfen, ob der Miner bereits vorhanden ist
