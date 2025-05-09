@@ -7,7 +7,7 @@ MINER_DIR="ethminer"
 REPO_URL="https://github.com/ethereum-mining/ethminer.git"
 INSTALLER_DIR="$HOME/miner-installer"
 START_SCRIPT="$INSTALLER_DIR/start.sh"
-PACKET_INSTALL="git build-essential cmake libssl-dev libhwloc-dev"
+PACKET_INSTALL="git build-essential cmake libssl-dev libhwloc-dev libboost-all-dev"
 
 # Schritt 1: Überprüfen, ob der Miner bereits vorhanden ist
 if [ -d "../$MINER_DIR" ]; then
