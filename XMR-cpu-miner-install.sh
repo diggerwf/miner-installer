@@ -8,7 +8,7 @@ START_SCRIPT="$INSTALLER_DIR/start.sh"
 
 # Schritt 1: Überprüfen, ob der Miner bereits vorhanden ist
 if [ -d "$MINER_DIR" ]; then
-    echo "Miner-Verzeichnis gefunden. Starte den Miner..."
+    echo "Miner-Verzeichnis gefunden. Gehe wieder zurück in start.sh"
     chmod +x "$START_SCRIPT"
     "$START_SCRIPT"
     exit 0
@@ -21,10 +21,10 @@ sudo apt install -y git build-essential cmake libuv1-dev libssl-dev libhwloc-dev
 
 # Schritt 3: Miner klonen (im aktuellen Verzeichnis)
 cd ..
-echo "Klonen des Miners..."
+echo "Klonen des xmrig Miners..."
 git clone "$REPO_URL" "$MINER_DIR"
 
-# Schritt 4: Miner bauen
+# Schritt 4: Xmr Miner bauen
 cd "$MINER_DIR"
 mkdir -p build && cd build
 echo "Konfigurieren..."
