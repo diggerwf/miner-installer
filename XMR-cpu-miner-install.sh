@@ -1,50 +1,105 @@
 #!/bin/bash
 
-# Speichere den ursprünglichen Ordner
-ORIGINAL_DIR=$(pwd)
+# Dieses Skript installiert und startet den XMRig CPU-Miner.
+# Es sollte mit Root-Rechten oder sudo ausgeführt werden.
+
+# Variablen
+MINER_DIR="../xmrig"
+REPO_URL="https://github.com/xmrig/xmrig.git"
+SCREEN_SESSION_NAME="xmr-miner"
+START_SCRIPT_NAME="start.sh"
 
 # Funktion zum Starten des Miners
 start_miner() {
-    echo "Wechsel in den miner-installer-Ordner..."
-    cd miner-installer || { echo "Fehler beim Wechsel in den miner-installer-Ordner"; exit 1; }
-    echo "Stelle sicher, dass start.sh ausführbar ist..."
-    chmod +x start.sh
-    ./start.sh
-    # Nach dem Start wieder in den ursprünglichen Ordner zurückkehren (optional)
-    cd "$ORIGINAL_DIR"
+    echo "Stelle sicher, dass $START_SCRIPT_NAME ausführbar ist..."
+    chmod +x "$START_SCRIPT_NAME"
+
+    echo "Starte den Miner in der Screen-Session '$SCREEN_SESSION_NAME'..."
+    # Überprüfen, ob die Session bereits läuft
+    if screen -list | grep -q "$SCREEN_SESSION_NAME"; then
+        echo "Die Screen-Session '$SCREEN_SESSION_NAME' läuft bereits."
+    else
+        screen -dmS "$SCREEN_SESSION_NAME" "./$START_SCRIPT_NAME"
+        echo "Miner wurde in der Screen-Session gestartet."
+    fi
 }
 
-# Prüfen, ob die start.sh bereits vorhanden ist (im aktuellen Verzeichnis)
-if [ -f "miner-installer/start.sh" ]; then
-    echo "start.sh im miner-installer gefunden. Miner wird gestartet..."
+# Prüfen, ob der Miner bereits installiert ist
+if [ -d "$MINER_DIR" ]; then
+    echo "Der Ordner '$MINER_DIR' wurde gefunden. Der Miner ist wahrscheinlich bereits installiert."
     start_miner
     exit 0
 fi
 
-# Wenn nicht vorhanden: in den Parent-Ordner wechseln (falls notwendig)
-echo "start.sh nicht gefunden. Installation wird gestartet..."
-cd .. || { echo "Fehler beim Wechsel in den Parent-Ordner"; exit 1; }
+# System aktualisieren und benötigte Pakete installieren
+echo "System-Update und Upgrade..."
+sudo apt update && sudo apt full-upgrade -y
 
-# System aktualisieren und bauen (wie vorher)
-apt update && apt full-upgrade -y
-apt autoremove -y
-apt install git screen build-essential cmake libuv1-dev libssl-dev libhwloc-dev -y
+echo "Nicht mehr benötigte Pakete entfernen..."
+sudo apt autoremove -y
+
+echo "Benötigte Pakete installieren..."
+sudo apt install -y screen git build-essential cmake libuv1-dev libssl-dev libhwloc-dev
+
+# In das Verzeichnis wechseln (falls notwendig)
+cd "$(dirname "$0")"
 
 # Klonen des Miners-Repositories
-git clone https://github.com/xmrig/xmrig.git
+echo "Klonen des Miners-Repositories..."
+git clone "$REPO_URL" "$MINER_DIR"
 
-# Zurück im ursprünglichen Ordner
-cd "$ORIGINAL_DIR"
+# In das Build-Verzeichnis wechseln
+mkdir -p "$MINER_DIR/build"
+cd "$MINER_DIR/build"
 
-# In den xmrig-Ordner wechseln und bauen
-cd xmrig || { echo "Fehler beim Wechsel in den xmrig-Ordner"; exit 1; }
-mkdir build && cd build
-cmake .. || { echo "cmake Fehler"; exit 1; }
-make || { echo "Make Fehler"; exit 1; }
+# Konfigurieren und bauen
+echo "Konfigurieren..."
+sudo cmake ..
 
-# Nach dem Build: wieder in den ursprünglichen Ordner zurückkehren
-cd "$ORIGINAL_DIR"
+echo "Bauen..."
+sudo make -j$(nproc)
 
-# Optional: Miner automatisch starten nach der Installation
-echo "Starte Miner..."
+# Erstellen eines einfachen Start-Skripts (falls noch nicht vorhanden)
+cat <<EOF > "$START_SCRIPT_NAME"
+#!/bin/bash
+./xmrig --config=config.json
+EOF
+
+chmod +x "$START_SCRIPT_NAME"
+
+# Optional: Beispiel-Konfigurationsdatei erstellen (hier nur ein Platzhalter)
+cat <<EOF > "$MINER_DIR/config.json"
+{
+    "autosave": true,
+    "cpu": {
+        "enabled": true,
+        "hugePages": true,
+        "priority": null,
+        "memoryPool": false,
+        "yield": true,
+        "maxThreads": 0,
+        "threads": []
+    },
+    "donate-level": 1,
+    "pools": [
+        {
+            "url": "<POOL_URL>",
+            "user": "<YOUR_WALLET_ADDRESS>",
+            "pass": "<PASSWORD>",
+            "keepalive": true,
+            "algo": null,
+            "coin": null,
+            "rig-id": null,
+            "nicehash": false,
+            "enabled": true
+        }
+    ]
+}
+EOF
+
+echo "Installation abgeschlossen."
+
+# Miner starten
 start_miner
+
+echo "Fertig! Der Miner läuft jetzt in der Screen-Session '$SCREEN_SESSION_NAME'."
