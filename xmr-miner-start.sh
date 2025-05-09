@@ -17,7 +17,10 @@ frage_daten() {
     echo "Bitte Wallet-Adresse eingeben:"
     read -r WALLET_ADDRESS
     echo "Bitte Pool-URL eingeben (z.B. eu1.solopool.org:8010):"
+    echo "Xmr Solo Pool"
     echo "240K	eu1.solopool.org	8010	Low-End Hardware"
+    echo "480K	eu1.solopool.org	7010	Mid-Range Hardware"
+    echo "960K	eu1.solopool.org	9010	High-End Hardware"
     read -r POOL_URL
 
     # Speichern der Daten in der Datei
