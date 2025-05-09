@@ -12,33 +12,16 @@ if [ "$1" == "-u" ]; then
     exit 0
 fi
 
-# Funktion zum Abfragen der Wallet- und Pool-Adresse
-frage_daten() {
-    echo "Bitte Wallet-Adresse eingeben:"
-    read -r WALLET_ADDRESS
-    echo "Bitte Pool-URL eingeben (z.B. eu1.solopool.org:8010):"
-    echo "Xmr Solo Pool https://xmr.solopool.org/"
-    echo "240K eu1.solopool.org 8010 Low-End Hardware"
-    echo "480K eu1.solopool.org 7010 Mid-Range Hardware"
-    echo "960K eu1.solopool.org 9010 High-End Hardware"
-    read -r POOL_URL
-
-    # Speichern der Daten in der Datei
-    echo "WALLET_ADDRESS=\"$WALLET_ADDRESS\"" > "$DATA_FILE"
-    echo "POOL_URL=\"$POOL_URL\"" >> "$DATA_FILE"
-}
-
 # Variablen
 SESSION_NAME="xmrig-miner"
 MINER_VERZEICHN="$HOME/xmrig/build"
 DATA_FILE="xmrig-cpu.userdata"
 
-# Parameterverarbeitung für Start/Stop
+# Parameterverarbeitung für Stop
 if [ "$1" == "-stop" ]; then
-    # Screen-Session beenden, falls vorhanden
-    if screen -list | grep -q "xmrig-miner"; then
-        echo "Beende die Screen-Session xmrig-miner ..."
-        screen kill xmrig-miner 
+    if screen -list | grep -q "$SESSION_NAME"; then
+        echo "Beende die Screen-Session '$SESSION_NAME'..."
+        screen -S "$SESSION_NAME" -X quit
         echo "Miner gestoppt."
     else
         echo "Keine laufende Screen-Session '$SESSION_NAME' gefunden."
