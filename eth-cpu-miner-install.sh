@@ -29,11 +29,12 @@ git clone "$REPO_URL" "$MINER_DIR"
 
 # Schritt 4:  Miner bauen
 cd "$MINER_DIR"
+git submodule update --init --recursive
 mkdir -p build && cd build
 echo "Konfigurieren..."
-sudo ./cmake ..
+sudo cmake ..
 echo "Bauen..."
-sudo ./make -j$(nproc)
+sudo make -j$(nproc)
 
 # Schritt 5: Zurück ins Verzeichnis `miner-installer`
 cd "$INSTALLER_DIR"
