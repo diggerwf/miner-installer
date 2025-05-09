@@ -36,9 +36,9 @@ DATA_FILE="xmrig-cpu.userdata"
 # Parameterverarbeitung für Start/Stop
 if [ "$1" == "-stop" ]; then
     # Screen-Session beenden, falls vorhanden
-    if screen -list | grep -q "$SESSION_NAME"; then
-        echo "Beende die Screen-Session '$SESSION_NAME'..."
-        screen -S "$SESSION_NAME" -X quit
+    if screen -list | grep -q "xmrig-miner"; then
+        echo "Beende die Screen-Session xmrig-miner ..."
+        screen kill xmrig-miner 
         echo "Miner gestoppt."
     else
         echo "Keine laufende Screen-Session '$SESSION_NAME' gefunden."
