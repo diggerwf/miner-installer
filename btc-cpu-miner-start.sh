@@ -2,7 +2,7 @@
 
 # Variablen
 SESSION_NAME="btc-miner"
-MINER_VERZEICHN="$HOME/btc-miner/build"
+MINER_VERZEICHN="$HOME/cpuminer-multi"
 DATA_FILE="btc-cpu-userdata"
 
 # Parameterverarbeitung für -stop
