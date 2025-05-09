@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Variablen
-MINER_DIR="../xmrig"
+HOME_DIR="$HOME"
+MINER_DIR="xmrig"
 REPO_URL="https://github.com/xmrig/xmrig.git"
 INSTALLER_DIR="$HOME/miner-installer"
 START_SCRIPT="$INSTALLER_DIR/start.sh"
@@ -20,7 +21,7 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y git build-essential cmake libuv1-dev libssl-dev libhwloc-dev
 
 # Schritt 3: Miner klonen (im aktuellen Verzeichnis)
-cd ..
+cd "$HOME_DI"
 echo "Klonen des xmrig Miners..."
 git clone "$REPO_URL" "$MINER_DIR"
 
