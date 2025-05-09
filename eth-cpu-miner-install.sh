@@ -20,7 +20,7 @@ fi
 # Schritt 2: System aktualisieren und benötigte Pakete installieren
 echo "System aktualisieren..."
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y git "$PACKET_INSTALL"
+sudo apt install -y "$PACKET_INSTALL"
 
 # Schritt 3: Miner klonen (im aktuellen Verzeichnis)
 cd "$HOME_DIR"
