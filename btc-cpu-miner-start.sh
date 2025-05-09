@@ -54,7 +54,7 @@ else
 
     (
         cd "$MINER_VERZEICHN" && \
-        screen -dmS "$SESSION_NAME" ./xmrig --donate-level=1 -o "$POOL_URL" -u "$WALLET_ADDRESS" -p x
+        screen -dmS "$SESSION_NAME" ./cpuminer -a sha256d -o "$POOL_URL" -u "$WALLET_ADDRESS" -p x
 
         if [ $? -eq 0 ]; then
             echo "Miner wurde erfolgreich gestartet."
