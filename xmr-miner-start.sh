@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# Funktion zum Abfragen der Daten
+frage_daten() {
+    echo "Bitte Wallet-Adresse eingeben:"
+    read -r WALLET_ADDRESS
+    echo "Bitte Pool-URL eingeben:"
+    read -r POOL_URL
+
+    # Daten in die Datei schreiben
+    cat > "$DATA_FILE" <<EOF
+WALLET_ADDRESS="$WALLET_ADDRESS"
+POOL_URL="$POOL_URL"
+EOF
+}
+
 # Überprüfen, ob der Parameter -u übergeben wurde
 if [ "$1" == "-u" ]; then
     # Prüfen, ob update.sh ausführbar ist
