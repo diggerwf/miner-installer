@@ -30,7 +30,7 @@ if [ ! -f "$DATA_FILE" ]; then
     # Beispiel: Daten eingeben oder laden
     echo "Bitte gib deine Wallet-Adresse ein:"
     read WALLET_ADDRESS
-    echo "Bitte gib den Pool-URL ein:"
+    echo "Bitte gib den Pool-URL ein, z.B. stratum+tcp://public-pool.io:21496."
     read POOL_URL
 
     # Daten speichern
