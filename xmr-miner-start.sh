@@ -4,7 +4,7 @@
 frage_daten() {
     echo "Bitte Wallet-Adresse eingeben:"
     read -r WALLET_ADDRESS
-    echo "Bitte Pool-URL eingeben:"
+    echo "Bitte Pool-URL eingeben, z.B. eu1.solopool.org:8010:"
     read -r POOL_URL
 
     # Daten in die Datei schreiben
