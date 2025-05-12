@@ -3,15 +3,15 @@
 # Funktion zum Installieren des Bitcoin CPU Miners
 install_bitcoin_cpu_miner() {
     echo "Bitcoin CPU Miner wird installiert..."
-    cd $HOME/miner-installer
+    cd "$(dirname "$0")"
     chmod +x bitcoin-cpu-miner-install.sh
     ./bitcoin-cpu-miner-install.sh
 }
 
-# Funktion zum Installieren des xmr CPU Miners
+# Funktion zum Installieren des XMR CPU Miners
 install_xmr_cpu_miner() {
     echo "XMR CPU Miner wird installiert..."
-    cd $HOME/miner-installer
+    cd "$(dirname "$0")"
     chmod +x XMR-cpu-miner-install.sh
     ./XMR-cpu-miner-install.sh
 }
@@ -30,12 +30,14 @@ run_xmr_cpu_miner() {
     ./xmr-cpu-miner.sh
 }
 
-# Funktion für die Auswahl des Miners basierend auf Ordner
+# Funktion für die Bitcoin CPU Miner Auswahl basierend auf Ordner
 bitcoin_miner_auswahl() {
-    if [ -d "../cpuminer-multi" ]; then
+    local script_dir="$(dirname "$0")"
+
+    if [ -d "$script_dir/../cpuminer-multi" ]; then
         echo "Der Ordner 'cpuminer-multi' wurde gefunden."
-        # Stelle sicher, dass btc-cpu-miner.sh ausführbar ist
-        chmod +x btc-cpu-miner.sh
+        # Stelle sicher, dass das Skript ausführbar ist
+        chmod +x "$script_dir/btc-cpu-miner.sh"
         run_btc_cpu_miner
     else
         echo "Der Ordner 'cpuminer-multi' wurde nicht gefunden."
@@ -50,9 +52,7 @@ bitcoin_miner_auswahl() {
                 install_bitcoin_cpu_miner
                 ;;
             2)
-                # Stelle sicher, dass btc-cpu-miner.sh ausführbar ist, bevor es gestartet wird
-                chmod +x start.sh
-                echo "gehe zurück"
+                echo "Zurück zum Hauptmenü."
                 ;;
             3)
                 echo "Beenden..."
@@ -65,15 +65,17 @@ bitcoin_miner_auswahl() {
     fi
 }
 
-# nur mit Xmrig
+# Nur mit Xmrig (XMR Miner)
 xmr_miner_auswahl() {
-    if [ -d "../xmrig" ]; then
-        echo "Der Ordner 'Xmrig' wurde gefunden."
-        # Stelle sicher, dass btc-cpu-miner.sh ausführbar ist
-        chmod +x XMR-cpu-miner-install.sh
+    local script_dir="$(dirname "$0")"
+
+    if [ -d "$script_dir/../xmrig" ]; then
+        echo "Der Ordner 'xmrig' wurde gefunden."
+        # Stelle sicher, dass das Installationsskript ausführbar ist
+        chmod +x "$script_dir/XMR-cpu-miner-install.sh"
         run_xmr_cpu_miner
     else
-        echo "Der Ordner 'Xmrig' wurde nicht gefunden."
+        echo "Der Ordner 'xmrig' wurde nicht gefunden."
         echo "Bitte wählen Sie eine Option:"
         echo "1) XMR CPU Miner installieren"
         echo "2) Zurück"
@@ -85,9 +87,7 @@ xmr_miner_auswahl() {
                 install_xmr_cpu_miner
                 ;;
             2)
-                # Stelle sicher, dass btc-cpu-miner.sh ausführbar ist, bevor es gestartet wird
-                chmod +x start.sh
-                echo "gehe zurück"
+                echo "Zurück zum Hauptmenü."
                 ;;
             3)
                 echo "Beenden..."
@@ -108,7 +108,7 @@ while true; do
     echo "2) Update ausführen"
     echo "3) Bitcoin CPU Miner verwalten"
     echo "4) Xmr CPU Miner verwalten"
-    read -p "Deine Wahl (1/2/3): " haupt_auswahl
+    read -p "Deine Wahl (1/2/3/4): " haupt_auswahl
 
     case "$haupt_auswahl" in
         1)
@@ -116,11 +116,11 @@ while true; do
             exit 0
             ;;
         2)
-            if [ -f "update.sh" ]; then
-                chmod +x "update.sh"
-                ./"update.sh"
-            else
-                echo "Datei 'update.sh' wurde nicht gefunden."
+            if [ -f "$(dirname "$0")/update.sh" ]; then
+                chmod +x "$(dirname "$0")/update.sh"
+                "$(dirname "$0")/update.sh"
+            else 
+                echo "'update.sh' wurde nicht gefunden."
             fi
             ;;
         3)
@@ -137,4 +137,3 @@ done
 
 echo "Skript beendet."
 exit 0
-#
